@@ -1,4 +1,6 @@
+import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import api from "../api/axios";
 import { useAuth } from "../context/AuthContext";
 
@@ -10,13 +12,20 @@ interface LoginForm {
 export default function LoginPage() {
   const { register, handleSubmit } = useForm<LoginForm>();
   const { login } = useAuth();
+  const navigate = useNavigate();
+  const [error, setError] = useState<string | null>(null);
 
   const onSubmit = async (data: LoginForm) => {
+    setError(null); // Clear previous errors
+
     try {
       const res = await api.post("/login", data);
       login(res.data.token);
-    } catch (error) {
-      console.error("Login failed");
+      navigate("/");
+    } catch (error: any) {
+      const errorMessage =
+        error?.response?.data?.message || "Authentication failed";
+      setError(errorMessage);
     }
   };
 
@@ -30,6 +39,15 @@ export default function LoginPage() {
           </h1>
           <p className="text-sm text-gray-600">authenticate to continue</p>
         </div>
+
+        {/* Error Message */}
+        {error && (
+          <div className="mb-4 p-3 border border-red-900 bg-red-950/30 rounded">
+            <p className="text-xs text-red-400">
+              <span className="text-red-500">ERROR:</span> {error}
+            </p>
+          </div>
+        )}
 
         {/* Form */}
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -72,7 +90,7 @@ export default function LoginPage() {
             type="submit"
             className="w-full bg-white text-black font-medium py-2.5 px-4 rounded text-sm hover:bg-gray-200 transition-colors mt-6"
           >
-            Sign in →
+            sign in →
           </button>
         </form>
 
