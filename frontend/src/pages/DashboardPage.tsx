@@ -4,14 +4,18 @@ import { fetchUsers } from "../api/users";
 import Modal from "../components/Modal";
 import UserForm from "../components/UserForm";
 import { useCreateUser } from "../features/users/useCreateUser";
+import { useDeleteUser } from "../features/users/UseDeleteUser";
 
 export default function DashboardPage() {
   const [page, setPage] = useState(1);
   const limit = 5;
 
+  const [editingUser, setEditingUser] = useState(null);
   const [open, setOpen] = useState(false);
 
   const createUser = useCreateUser();
+
+  const deleteUser = useDeleteUser();
 
   const { data, isLoading, isFetching, error } = useQuery({
     queryKey: ["users", page],
@@ -48,29 +52,45 @@ export default function DashboardPage() {
         {data.data.map((user: any) => (
           <div
             key={user.id}
-            style={{
-              border: "1px solid #ccc",
-              padding: 10,
-              marginTop: 10,
-              display: "flex",
-              alignItems: "center",
-              gap: 10,
-            }}
+            className="flex items-center justify-between border p-3 rounded shadow-sm"
           >
-            <img
-              src={user.avatar}
-              alt="avatar"
-              width={50}
-              height={50}
-              style={{ borderRadius: "50%" }}
-            />
+            {/* LEFT SIDE (USER INFO) */}
+            <div className="flex items-center gap-4">
+              <img src={user.avatar} className="w-12 h-12 rounded-full" />
 
-            <div>
-              <strong>
-                {user.firstName} {user.lastName}
-              </strong>
-              <p>{user.email}</p>
-              <p>{user.jobTitle}</p>
+              <div>
+                <p className="font-semibold">
+                  {user.firstName} {user.lastName}
+                </p>
+                <p className="text-sm text-gray-500">{user.email}</p>
+                <p className="text-sm">{user.jobTitle}</p>
+              </div>
+            </div>
+
+            {/* RIGHT SIDE (ACTIONS) */}
+            <div className="flex gap-3">
+              {/* EDIT BUTTON */}
+              <button
+                onClick={() => {
+                  setEditingUser(user); // 👈 THIS sets form data
+                  setOpen(true); // 👈 opens modal
+                }}
+                className="text-blue-500"
+              >
+                Edit
+              </button>
+
+              {/* DELETE BUTTON */}
+              <button
+                onClick={() => {
+                  if (confirm("Are you sure?")) {
+                    deleteUser.mutate(user.id);
+                  }
+                }}
+                className="text-red-500"
+              >
+                Delete
+              </button>
             </div>
           </div>
         ))}
