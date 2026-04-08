@@ -1,12 +1,25 @@
 import { z } from "zod";
 
-export const userSchema = z.object({
+const optionalString = z
+  .string()
+  .transform((val) => (val === "" ? undefined : val))
+  .optional();
+
+const baseSchema = z.object({
+  email: optionalString,
+  firstName: optionalString,
+  lastName: optionalString,
+  jobTitle: optionalString,
+  avatar: optionalString,
+});
+
+export const createUserSchema = z.object({
   email: z.string().email(),
   password: z.string().min(6),
   firstName: z.string().regex(/^[A-Za-z]+$/),
   lastName: z.string().regex(/^[A-Za-z]+$/),
   jobTitle: z.string().min(2),
-  avatar: z.string().url(),
+  avatar: z.string().url().optional(),
 });
 
-export type UserFormData = z.infer<typeof userSchema>;
+export const updateUserSchema = baseSchema;
