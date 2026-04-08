@@ -10,6 +10,7 @@ import { useUpdateUser } from "../features/users/useUpdateUser";
 import { useDeleteUser } from "../features/users/UseDeleteUser";
 
 import type { UserFormData } from "../types/user";
+import LogoutButton from "../components/LogoutButton";
 
 export default function DashboardPage() {
   const [page, setPage] = useState(1);
@@ -58,6 +59,7 @@ export default function DashboardPage() {
         )}
 
         {/* HEADER */}
+
         <div className="flex justify-between items-center mb-8 pb-4 border-b border-gray-900">
           <div>
             <h2 className="text-xl font-normal mb-1">
@@ -65,16 +67,18 @@ export default function DashboardPage() {
             </h2>
             <p className="text-xs text-gray-600">{data?.total || 0} records</p>
           </div>
-
-          <button
-            onClick={() => {
-              setEditingUser(null);
-              setOpen(true);
-            }}
-            className="bg-white text-black px-4 py-2 rounded text-sm font-medium hover:bg-gray-200 transition-colors"
-          >
-            + new
-          </button>
+          <div className="flex items-center gap-3">
+            <LogoutButton />
+            <button
+              onClick={() => {
+                setEditingUser(null);
+                setOpen(true);
+              }}
+              className="bg-white text-black px-4 py-2 rounded text-sm font-medium hover:bg-gray-200 transition-colors cursor-pointer"
+            >
+              + new
+            </button>
+          </div>
         </div>
 
         {/* LOADING INDICATOR
@@ -132,7 +136,7 @@ export default function DashboardPage() {
                       setOpen(true);
                     }}
                     disabled={updateUser.isPending}
-                    className="px-3 py-1 text-xs border border-gray-800 rounded hover:border-gray-600 hover:text-white transition-colors disabled:opacity-50"
+                    className="px-3 py-1 text-xs border border-gray-800 rounded hover:border-gray-600 hover:text-white transition-colors disabled:opacity-50 cursor-pointer"
                   >
                     edit
                   </button>
@@ -149,7 +153,7 @@ export default function DashboardPage() {
                       }
                     }}
                     disabled={deleteUser.isPending}
-                    className="px-3 py-1 text-xs border border-gray-800 rounded hover:border-red-900 hover:text-red-400 transition-colors disabled:opacity-50"
+                    className="px-3 py-1 text-xs border border-gray-800 rounded hover:border-red-900 hover:text-red-400 transition-colors disabled:opacity-50 cursor-pointer"
                   >
                     {deleteUser.isPending ? "..." : "delete"}
                   </button>
@@ -160,11 +164,11 @@ export default function DashboardPage() {
         </div>
 
         {/* PAGINATION */}
-        <div className="flex justify-between items-center mt-8 pt-4 border-t border-gray-900">
+        <div className="flex justify-between items-center mt-8 pt-4 border-t border-gray-900 cursor-pointer">
           <button
             disabled={page === 1}
             onClick={() => setPage((p) => p - 1)}
-            className="px-3 py-1.5 text-xs border border-gray-800 rounded disabled:opacity-30 disabled:cursor-not-allowed hover:enabled:border-gray-600 transition-colors"
+            className="px-3 py-1.5 text-xs border border-gray-800 rounded disabled:opacity-30 disabled:cursor-not-allowed hover:enabled:border-gray-600 transition-colors cursor-pointer"
           >
             ← prev
           </button>
@@ -177,7 +181,7 @@ export default function DashboardPage() {
           <button
             disabled={page === data?.totalPages}
             onClick={() => setPage((p) => p + 1)}
-            className="px-3 py-1.5 text-xs border border-gray-800 rounded disabled:opacity-30 disabled:cursor-not-allowed hover:enabled:border-gray-600 transition-colors"
+            className="px-3 py-1.5 text-xs border border-gray-800 rounded disabled:opacity-30 disabled:cursor-not-allowed hover:enabled:border-gray-600 transition-colors cursor-pointer"
           >
             next →
           </button>
