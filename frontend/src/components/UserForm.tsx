@@ -25,7 +25,6 @@ export default function UserForm({
   const {
     register,
     handleSubmit,
-    setValue,
     formState: { isSubmitting, errors },
   } = useForm<UserFormData>({
     resolver: zodResolver(isEdit ? updateUserSchema : createUserSchema),
