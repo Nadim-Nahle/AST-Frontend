@@ -2,12 +2,10 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "../../api/axios";
 
 export const useCreateUser = () => {
-  const queryClient = useQueryClient();
+  const qc = useQueryClient();
 
   return useMutation({
     mutationFn: (data: any) => api.post("/users", data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["users"] });
-    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["users"] }),
   });
 };

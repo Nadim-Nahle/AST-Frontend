@@ -1,36 +1,17 @@
-export default function Modal({
-  isOpen,
-  onClose,
-  children,
-}: {
-  isOpen: boolean;
-  onClose: () => void;
-  children: React.ReactNode;
-}) {
+export default function Modal({ isOpen, onClose, children }: any) {
   if (!isOpen) return null;
 
   return (
-    <div style={overlayStyle}>
-      <div style={modalStyle}>
-        <button onClick={onClose}>X</button>
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
+      <div className="bg-white p-6 rounded w-[400px] relative">
+        <button
+          onClick={onClose}
+          className="absolute top-2 right-2 cursor-pointer"
+        >
+          ✕
+        </button>
         {children}
       </div>
     </div>
   );
 }
-
-const overlayStyle: React.CSSProperties = {
-  position: "fixed",
-  top: 0,
-  left: 0,
-  width: "100%",
-  height: "100%",
-  background: "rgba(0,0,0,0.5)",
-};
-
-const modalStyle: React.CSSProperties = {
-  background: "white",
-  padding: 20,
-  margin: "100px auto",
-  width: 400,
-};

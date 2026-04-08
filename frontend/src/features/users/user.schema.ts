@@ -19,7 +19,8 @@ export const createUserSchema = z.object({
   firstName: z.string().regex(/^[A-Za-z]+$/),
   lastName: z.string().regex(/^[A-Za-z]+$/),
   jobTitle: z.string().min(2),
-  avatar: z.string().url().optional(),
+  avatar: optionalString,
 });
 
 export const updateUserSchema = baseSchema;
+export type UserFormData = z.infer<typeof createUserSchema>;

@@ -1,70 +1,82 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+
 import {
   createUserSchema,
   updateUserSchema,
 } from "../features/users/user.schema";
 
+import type { User } from "../types/user";
+
+// 🔥 Use Partial<User> for flexibility
+type UserFormData = Partial<User>;
+
 export default function UserForm({
   onSubmit,
   defaultValues,
 }: {
-  onSubmit: (data: any) => void;
-  defaultValues?: any;
+  onSubmit: (data: UserFormData) => void;
+  defaultValues?: Partial<UserFormData>;
 }) {
   const isEdit = !!defaultValues && Object.keys(defaultValues).length > 0;
 
-  const form = useForm({
+  const {
+    register,
+    handleSubmit,
+    formState: { isSubmitting },
+  } = useForm<UserFormData>({
     resolver: zodResolver(isEdit ? updateUserSchema : createUserSchema),
     defaultValues,
   });
 
-  const { register, handleSubmit } = form;
-
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-3" noValidate>
       <input
-        placeholder="Email"
         {...register("email")}
-        className="border p-2 w-full"
+        placeholder="Email"
+        className="border p-2 w-full rounded"
       />
 
-      {/* 🔥 Password only in CREATE */}
+      {/* 🔥 Password ONLY in create */}
       {!isEdit && (
         <input
-          placeholder="Password"
-          type="password"
           {...register("password")}
-          className="border p-2 w-full"
+          type="password"
+          placeholder="Password"
+          className="border p-2 w-full rounded"
         />
       )}
 
       <input
-        placeholder="First Name"
         {...register("firstName")}
-        className="border p-2 w-full"
+        placeholder="First Name"
+        className="border p-2 w-full rounded"
       />
 
       <input
-        placeholder="Last Name"
         {...register("lastName")}
-        className="border p-2 w-full"
+        placeholder="Last Name"
+        className="border p-2 w-full rounded"
       />
 
       <input
-        placeholder="Job Title"
         {...register("jobTitle")}
-        className="border p-2 w-full"
+        placeholder="Job Title"
+        className="border p-2 w-full rounded"
       />
 
       <input
-        placeholder="Avatar URL"
         {...register("avatar")}
-        className="border p-2 w-full"
+        placeholder="Avatar URL (optional)"
+        className="border p-2 w-full rounded"
       />
 
-      <button className="bg-blue-500 text-white px-4 py-2 rounded w-full cursor-pointer">
-        {isEdit ? "Update User" : "Create User"}
+      <button
+        type="submit"
+        disabled={isSubmitting}
+        className="bg-blue-500 text-white w-full py-2 rounded disabled:opacity-50"
+      >
+        {isSubmitting ? "Saving..." : isEdit ? "Update User" : "Create User"}
       </button>
     </form>
   );

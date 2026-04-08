@@ -9,6 +9,8 @@ import { useCreateUser } from "../features/users/useCreateUser";
 import { useUpdateUser } from "../features/users/useUpdateUser";
 import { useDeleteUser } from "../features/users/UseDeleteUser";
 
+import type { UserFormData } from "../types/user";
+
 export default function DashboardPage() {
   const [page, setPage] = useState(1);
   const [open, setOpen] = useState(false);
@@ -20,19 +22,14 @@ export default function DashboardPage() {
   const updateUser = useUpdateUser();
   const deleteUser = useDeleteUser();
 
-  const { data, isLoading, isFetching, error } = useQuery({
+  const { data, isLoading, isFetching } = useQuery({
     queryKey: ["users", page],
     queryFn: () => fetchUsers(page, limit),
     placeholderData: (prev) => prev,
   });
 
-  // 🔥 Initial loading
   if (isLoading) {
-    return <div className="p-6">Loading users...</div>;
-  }
-
-  if (error) {
-    return <div className="p-6 text-red-500">Error loading users</div>;
+    return <div className="p-6 text-center">Loading users...</div>;
   }
 
   return (
@@ -46,28 +43,28 @@ export default function DashboardPage() {
             setEditingUser(null);
             setOpen(true);
           }}
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 cursor-pointer"
+          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
         >
           Create User
         </button>
       </div>
 
-      {/* 🔥 Page transition loading */}
+      {/* LOADING ON PAGE CHANGE */}
       {isFetching && <p className="text-sm text-gray-500 mb-2">Loading...</p>}
 
       {/* USERS LIST */}
       <div className="space-y-4">
-        {data.data.length === 0 && (
-          <p className="text-gray-500">No users found</p>
+        {data?.data.length === 0 && (
+          <p className="text-gray-500 text-center">No users found</p>
         )}
 
-        {data.data.map((user: any) => (
+        {data?.data.map((user: any) => (
           <div
             key={user.id}
-            className="flex items-center justify-between border p-4 rounded shadow-sm bg-white"
+            className="flex justify-between items-center border p-4 rounded shadow-sm bg-white"
           >
-            {/* LEFT SIDE */}
-            <div className="flex items-center gap-4">
+            {/* LEFT */}
+            <div className="flex gap-4 items-center">
               <img
                 src={user.avatar}
                 alt="avatar"
@@ -83,15 +80,16 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            {/* RIGHT SIDE (ACTIONS) */}
-            <div className="flex gap-3">
+            {/* ACTIONS */}
+            <div className="flex gap-2">
               {/* EDIT */}
               <button
                 onClick={() => {
                   setEditingUser(user);
                   setOpen(true);
                 }}
-                className="text-blue-500 hover:underline cursor-pointer"
+                disabled={updateUser.isPending}
+                className="px-3 py-1 bg-blue-100 text-blue-600 rounded hover:bg-blue-200 cursor-pointer disabled:opacity-50"
               >
                 Edit
               </button>
@@ -103,9 +101,10 @@ export default function DashboardPage() {
                     deleteUser.mutate(user.id);
                   }
                 }}
-                className="text-red-500 hover:underline cursor-pointer"
+                disabled={deleteUser.isPending}
+                className="px-3 py-1 bg-red-100 text-red-600 rounded hover:bg-red-200 cursor-pointer disabled:opacity-50"
               >
-                Delete
+                {deleteUser.isPending ? "Deleting..." : "Delete"}
               </button>
             </div>
           </div>
@@ -113,11 +112,11 @@ export default function DashboardPage() {
       </div>
 
       {/* PAGINATION */}
-      <div className="flex justify-between items-center mt-6">
+      <div className="flex justify-between mt-6 items-center">
         <button
           disabled={page === 1}
           onClick={() => setPage((p) => p - 1)}
-          className="px-3 py-1 border rounded disabled:opacity-50 cursor-pointer"
+          className="px-3 py-1 border rounded disabled:opacity-50"
         >
           Prev
         </button>
@@ -127,7 +126,7 @@ export default function DashboardPage() {
         <button
           disabled={page === data.totalPages}
           onClick={() => setPage((p) => p + 1)}
-          className="px-3 py-1 border rounded disabled:opacity-50 cursor-pointer"
+          className="px-3 py-1 border rounded disabled:opacity-50"
         >
           Next
         </button>
@@ -137,7 +136,8 @@ export default function DashboardPage() {
       <Modal isOpen={open} onClose={() => setOpen(false)}>
         <UserForm
           defaultValues={editingUser || {}}
-          onSubmit={(formData) => {
+          onSubmit={(formData: UserFormData) => {
+            // 🔥 remove empty fields
             const cleaned = Object.fromEntries(
               Object.entries(formData).filter(([_, v]) => v !== ""),
             );
@@ -146,8 +146,9 @@ export default function DashboardPage() {
               ...cleaned,
               avatar:
                 cleaned.avatar ||
-                `https://img.freepik.com/premium-vector/person-with-blue-shirt-that-says-name-person_1029948-7040.jpg`,
+                `https://i.pravatar.cc/150?u=${cleaned.email}`,
             };
+
             if (editingUser) {
               updateUser.mutate({
                 id: editingUser.id,
