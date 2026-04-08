@@ -11,12 +11,14 @@ import { useDeleteUser } from "../features/users/UseDeleteUser";
 
 import type { UserFormData } from "../types/user";
 import LogoutButton from "../components/LogoutButton";
+import { useSearchParams } from "react-router-dom";
 
 export default function DashboardPage() {
-  const [page, setPage] = useState(1);
+  const [searchParams, setSearchParams] = useSearchParams();
   const [open, setOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<any>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const page = parseInt(searchParams.get("page") || "1", 10);
 
   const limit = 5;
 
@@ -29,6 +31,12 @@ export default function DashboardPage() {
     queryFn: () => fetchUsers(page, limit),
     placeholderData: (prev) => prev,
   });
+
+  const handlePageChange = (newPage: number) => {
+    setSearchParams({ page: newPage.toString() });
+    // Smooth transition: scroll to top
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   // Auto-hide success message after 3 seconds
   const showSuccess = (message: string) => {
@@ -82,14 +90,16 @@ export default function DashboardPage() {
         </div>
 
         {/* LOADING INDICATOR
-        {isFetching && (
-          <div className="text-xs text-gray-600 mb-4">
-            <span className="text-gray-700">//</span> fetching...
-          </div>
-        )} */}
+            {isFetching && (
+            <div className="text-xs text-gray-600 mb-4">
+                <span className="text-gray-700">//</span> fetching...
+            </div>
+            )} */}
 
         {/* USERS LIST */}
-        <div className="space-y-2 min-h-[400px]">
+        <div
+          className={`space-y-2 min-h-[400px] transition-opacity duration-200 ${isFetching ? "opacity-50" : "opacity-100"}`}
+        >
           {data?.data.length === 0 && (
             <div className="text-center py-12 text-gray-600 text-sm">
               <span className="text-gray-700">//</span> no users found
@@ -164,10 +174,10 @@ export default function DashboardPage() {
         </div>
 
         {/* PAGINATION */}
-        <div className="flex justify-between items-center mt-8 pt-4 border-t border-gray-900 cursor-pointer">
+        <div className="flex justify-between items-center mt-8 pt-4 border-t border-gray-900">
           <button
             disabled={page === 1}
-            onClick={() => setPage((p) => p - 1)}
+            onClick={() => handlePageChange(page - 1)} // Use handlePageChange
             className="px-3 py-1.5 text-xs border border-gray-800 rounded disabled:opacity-30 disabled:cursor-not-allowed hover:enabled:border-gray-600 transition-colors cursor-pointer"
           >
             ← prev
@@ -179,8 +189,8 @@ export default function DashboardPage() {
           </span>
 
           <button
-            disabled={page === data?.totalPages}
-            onClick={() => setPage((p) => p + 1)}
+            disabled={page >= (data?.totalPages || 1)}
+            onClick={() => handlePageChange(page + 1)} // Use handlePageChange
             className="px-3 py-1.5 text-xs border border-gray-800 rounded disabled:opacity-30 disabled:cursor-not-allowed hover:enabled:border-gray-600 transition-colors cursor-pointer"
           >
             next →
