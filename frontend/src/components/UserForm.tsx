@@ -25,6 +25,7 @@ export default function UserForm({
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { isSubmitting, errors },
   } = useForm<UserFormData>({
     resolver: zodResolver(isEdit ? updateUserSchema : createUserSchema),
@@ -143,7 +144,7 @@ export default function UserForm({
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full bg-white text-black font-medium py-2.5 px-4 rounded text-sm hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed mt-6"
+        className="w-full bg-white text-black font-medium py-2.5 px-4 rounded text-sm hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed mt-6 cursor-pointer"
       >
         {isSubmitting ? "saving..." : isEdit ? "update →" : "create →"}
       </button>

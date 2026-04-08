@@ -11,7 +11,7 @@ export default function Modal({ isOpen, onClose, children }: any) {
           </span>
           <button
             onClick={onClose}
-            className="text-gray-600 hover:text-gray-400 text-sm transition-colors"
+            className="text-gray-600 hover:text-gray-400 text-sm transition-colors cursor-pointer"
           >
             [esc]
           </button>
