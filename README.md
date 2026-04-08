@@ -5,8 +5,8 @@ Follow these steps to run the frontend locally.
 ## 1. Clone the repository
 
 ```bash
-git clone <your-repo-url>
-cd <your-project-folder>
+git clone https://github.com/Nadim-Nahle/AST-Frontend.git
+cd AST-Frontend
 ```
 
 ## 2. Navigate to the frontend folder
@@ -37,7 +37,7 @@ Your frontend should now be running locally (usually on `http://localhost:5173` 
 
 Don’t feel like running it locally? You can access the live version here:
 
-👉 <[your-hosted-link](https://ast-frontend-ten.vercel.app/)>
+👉 https://ast-frontend-ten.vercel.app/
 
 ---
 
