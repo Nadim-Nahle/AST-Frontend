@@ -77,15 +77,15 @@ export default function DashboardPage() {
           </button>
         </div>
 
-        {/* LOADING INDICATOR */}
+        {/* LOADING INDICATOR
         {isFetching && (
           <div className="text-xs text-gray-600 mb-4">
             <span className="text-gray-700">//</span> fetching...
           </div>
-        )}
+        )} */}
 
         {/* USERS LIST */}
-        <div className="space-y-2">
+        <div className="space-y-2 min-h-[400px]">
           {data?.data.length === 0 && (
             <div className="text-center py-12 text-gray-600 text-sm">
               <span className="text-gray-700">//</span> no users found
@@ -104,7 +104,7 @@ export default function DashboardPage() {
                     <img
                       src={user.avatar}
                       alt="avatar"
-                      className="w-10 h-10 rounded border border-gray-800"
+                      className="w-10 h-10 rounded border border-gray-800 object-cover bg-gray-900"
                     />
                     <span className="absolute -top-1 -left-1 text-[10px] text-gray-700">
                       [{index + 1 + (page - 1) * limit}]
